@@ -1,0 +1,19 @@
+name:  下载jable
+
+on: [push, workflow_dispatch]
+
+jobs:
+  download_jable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout
+        uses: actions/checkout@v4
+
+      - name: 2. python init
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.14'
+          cache: 'pip'
+
+      - name: 3. 运行
+        run: python main.py
