@@ -24,3 +24,9 @@ jobs:
 
       - name: 4. 运行
         run: python main.py
+
+      - name: 6. 上传爬取结果
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawler-data        # 下载时的文件名
+
