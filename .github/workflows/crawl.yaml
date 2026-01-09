@@ -14,5 +14,8 @@ jobs:
         with:
           python-version: '3.11.14'
 
-      - name: 3. 运行
+      - name: 3 赋予执行权限
+        run: chmod +x ./crawl/N_m3u8DL-RE
+
+      - name: 4. 运行
         run: python main.py
