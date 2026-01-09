@@ -14,6 +14,11 @@ jobs:
         with:
           python-version: '3.11.14'
 
+      - name: Install FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+        with:
+          ffmpeg-version: release
+
       - name: 3 赋予执行权限
         run: chmod +x ./N_m3u8DL-RE
 
