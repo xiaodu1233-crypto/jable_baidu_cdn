@@ -133,7 +133,7 @@ async def main(my_files, file_name):
     print(f"🎬 你的在线播放地址: {final_m3u8_id[1]}")
 
 
-def split_video_by_time(input_file, segment_time=130):
+def split_video_by_time(input_file , segment_time=130):
     """
     使用 FFmpeg 将视频按时间切割为 TS 片段
     :param input_file: 输入视频路径 (如 'movie.mp4')
@@ -141,6 +141,7 @@ def split_video_by_time(input_file, segment_time=130):
     """
     # 确保输出文件名格式，例如 out000.ts, out001.ts
     output_template = "out%03d.ts"
+    input_file = input_file + '.mp4'
 
     # 构建命令列表
     command = [
@@ -168,11 +169,23 @@ def split_video_by_time(input_file, segment_time=130):
 
 if __name__ == "__main__":
     urtl = 'https://kumak-clonser.mushroomtrack.com/hls/PFzMIjWSX16Psbsa2N1tHw/1768043344/48000/48168/48168.m3u8'
-    save_name = 'ok.mp4'
+    save_name = 'ok'
     link_name = 'N_m3u8DL-RE'
     if os.getenv('GITHUB_ACTIONS') == 'true':
         link_name = './N_m3u8DL-RE'
-    subprocess.run([link_name, urtl, '--skip-merge', 'False', '--thread-count', '50', '--save-name', save_name], encoding='utf-8')
+
+    command = [
+        link_name,
+        urtl,
+        "--save-name", "ok",
+        # "--tmp-dir", "./temp",  # 临时目录存 TS 片段
+        "--skip-merge", 'false', # 重要：不合并，保留 TS 片段用于上传
+        # "--del-after-done", "true",
+        "--check-segments-count", "false"# 完成后不删除
+    ]
+    subprocess.run(command)
+
+    time.sleep(2)
 
     split_video_by_time(save_name)
 
@@ -180,7 +193,12 @@ if __name__ == "__main__":
     path = pathlib.Path(save_name)
     file_name = 'finish.m3u8'
     print(f'file_name, {file_name}')
+
+    time.sleep(2)
+
+    #
     my_files = []
     for item in path.glob('*.ts'):
         my_files.append(item)
-    asyncio.run(main(my_files, file_name))
+    if len(my_files):
+        asyncio.run(main(my_files, file_name))
