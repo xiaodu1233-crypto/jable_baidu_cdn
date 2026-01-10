@@ -23,7 +23,9 @@ jobs:
         run: chmod +x ./N_m3u8DL-RE
 
       - name: 4. 运行
-        run: python telegram.py
+        run: | 
+           pip install aiohttp &&
+           python telegram.py 
 
       - name: 6. 上传爬取结果
         uses: actions/upload-artifact@v4
