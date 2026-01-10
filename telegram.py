@@ -222,7 +222,8 @@ if __name__ == "__main__":
         link_name,
         urtl,
         "--save-name", "ok",
-        "--check-segments-count", "false"
+        "--check-segments-count", "false",
+        "--auto-select", "true",
     ]
     subprocess.run(command)
 
@@ -232,15 +233,16 @@ if __name__ == "__main__":
 
 
 
-    # path = pathlib.Path(save_name)
-    # file_name = 'finish.m3u8'
-    # print(f'file_name, {file_name}')
+    path = pathlib.Path(__file__).joinpath(save_name)
+    file_name = 'finish.m3u8'
+    print(f'file_name, {file_name}')
+
+    time.sleep(2)
+
     #
-    # time.sleep(2)
-    #
-    # #
-    # my_files = []
-    # for item in path.joinpath('0____').glob('*.ts'):
-    #     my_files.append(item)
-    # if len(my_files):
-    #     asyncio.run(main(my_files, file_name))
+    my_files = []
+    for item in path.joinpath('0____').glob('*.ts'):
+        if item.is_file():
+            my_files.append(item)
+    if len(my_files):
+        asyncio.run(main(my_files, file_name))
