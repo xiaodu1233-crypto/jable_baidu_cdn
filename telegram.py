@@ -147,13 +147,12 @@ def split_video_by_time(input_file , segment_time=130):
     for item in files_and_dirs:
         print(item)
 
-    return
 
     output_template = "out%03d.ts"
     input_file = input_file + '.mp4'
 
-    if os.getenv('GITHUB_ACTIONS') == 'true':
-        input_file = f'.{os.sep}' + input_file
+    # if os.getenv('GITHUB_ACTIONS') == 'true':
+    #     input_file = f'.{os.sep}' + input_file
 
     # 构建命令列表
     command = [
@@ -190,9 +189,9 @@ if __name__ == "__main__":
         link_name,
         urtl,
         "--save-name", "ok",
-        # "--tmp-dir", "./temp",  # 临时目录存 TS 片段
+        "--tmp-dir", "./temp",  # 临时目录存 TS 片段
         "--skip-merge", 'false', # 重要：不合并，保留 TS 片段用于上传
-        # "--del-after-done", "true",
+        "--del-after-done", "true",
         "--check-segments-count", "false"# 完成后不删除
     ]
     subprocess.run(command)
