@@ -134,23 +134,36 @@ async def main(my_files, file_name):
     print(f"🎬 你的在线播放地址: {final_m3u8_id[1]}")
 
 
-def split_video_by_time(input_file , segment_time=130):
+def merge_and_resplit(ts_dir, output_mp4="merged.mp4"):
+    # 1. 获取所有原始 TS 分片并按数字顺序排序 (极其重要)
+    # 假设 N_m3u8DL-RE 下载的文件在 ts_dir 目录下
+    files = glob.glob(os.path.join(ts_dir, "*.ts"))
+    # 自然排序：确保 2.ts 在 10.ts 之前
+    files.sort(key=lambda f: int(re.search(r'\d+', os.path.basename(f)).group()))
 
-    """
-    使用 FFmpeg 将视频按时间切割为 TS 片段
-    :param input_file: 输入视频路径 (如 'movie.mp4')
-    :param segment_time: 每段时长（秒），建议 120-150s 对应 50MB 左右
-    """
-    # 确保输出文件名格式，例如 out000.ts, out001.ts
-    path = "."
-    files_and_dirs = os.listdir(path)
+    if not files:
+        print("❌ 错误：目录下没有找到 TS 文件")
+        return
 
-    for item in files_and_dirs:
-        if item.startswith('ok'):
-            print(pathlib.Path(item).is_dir())
-        print(item)
+    # 2. 创建 FFmpeg 拼接清单文件
+    list_path = "concat_list.txt"
+    with open(list_path, "w", encoding="utf-8") as f:
+        for file in files:
+            # 使用绝对路径，防止 FFmpeg 找不到文件
+            abs_path = os.path.abspath(file).replace("\\", "/")
+            f.write(f"file '{abs_path}'\n")
 
+    print(f"🔗 正在合并 {len(files)} 个分片为 {output_mp4}...")
 
+    # 3. 执行无损合并
+    merge_cmd = [
+        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+        "-i", list_path, "-c", "copy", output_mp4
+    ]
+    subprocess.run(merge_cmd, check=True)
+
+    # 4. 立即将合并后的 2GB 文件重新切分为 45MB 的规范片段
+    print("✂️ 正在进行 45MB 规范化二次切片...")
     output_template = "out%03d.ts"
     # input_file = input_file + '.mp4'
 
@@ -178,6 +191,43 @@ def split_video_by_time(input_file , segment_time=130):
     except FileNotFoundError:
         print("❌ 系统找不到 ffmpeg，请检查是否安装并添加到了环境变量。")
 
+    # 5. 清理临时合并文件和清单
+    os.remove(list_path)
+    # os.remove(output_mp4) # 如果为了节省 Actions 空间，切完就可以删了
+    print("✅ 处理完成！现在你可以上传 upload_*.ts 文件了。")
+
+
+# 调用示例
+
+
+def split_video_by_time(input_file , segment_time=130):
+
+    """
+    使用 FFmpeg 将视频按时间切割为 TS 片段
+    :param input_file: 输入视频路径 (如 'movie.mp4')
+    :param segment_time: 每段时长（秒），建议 120-150s 对应 50MB 左右
+    """
+    # 确保输出文件名格式，例如 out000.ts, out001.ts
+    path = "."
+    files_and_dirs = os.listdir(path)
+
+    for item in files_and_dirs:
+        if item.startswith('ok'):
+            print(pathlib.Path(item).is_dir())
+        print(item)
+
+    path = pathlib.Path(input_file)
+    if path.is_dir():
+        print("目录")
+        for item in path.iterdir():
+            if item.is_dir():
+                merge_and_resplit(item)
+                break
+    else:
+        print("文件")
+
+
+
 if __name__ == "__main__":
     urtl = 'https://kumak-clonser.mushroomtrack.com/hls/PFzMIjWSX16Psbsa2N1tHw/1768043344/48000/48168/48168.m3u8'
     save_name = 'ok'
@@ -201,17 +251,15 @@ if __name__ == "__main__":
 
     split_video_by_time(save_name)
 
-
-
     path = pathlib.Path(save_name)
     file_name = 'finish.m3u8'
     print(f'file_name, {file_name}')
 
-    time.sleep(5)
+    time.sleep(2)
 
     #
     my_files = []
-    for item in path.glob('*.ts'):
+    for item in path.joinpath('0____').glob('*.ts'):
         my_files.append(item)
     if len(my_files):
         asyncio.run(main(my_files, file_name))
