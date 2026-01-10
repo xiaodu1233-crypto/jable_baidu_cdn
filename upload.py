@@ -55,7 +55,7 @@ async def main():
 
     async with async_playwright() as p:
         chrome = p.chromium
-        browser = await chrome.launch(headless=False, devtools=True)
+        browser = await chrome.launch(headless=True, devtools=True)
         page = await browser.new_page(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.54", )
 
