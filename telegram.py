@@ -134,12 +134,21 @@ async def main(my_files, file_name):
 
 
 def split_video_by_time(input_file , segment_time=130):
+
     """
     使用 FFmpeg 将视频按时间切割为 TS 片段
     :param input_file: 输入视频路径 (如 'movie.mp4')
     :param segment_time: 每段时长（秒），建议 120-150s 对应 50MB 左右
     """
     # 确保输出文件名格式，例如 out000.ts, out001.ts
+    path = "."
+    files_and_dirs = os.listdir(path)
+
+    for item in files_and_dirs:
+        print(item)
+
+    return
+
     output_template = "out%03d.ts"
     input_file = input_file + '.mp4'
 
