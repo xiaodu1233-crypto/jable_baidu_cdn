@@ -201,18 +201,22 @@ def split_video_by_time(input_file , segment_time=130):
         if item.startswith('ok'):
             print(pathlib.Path(item).is_dir())
         print(item)
-    return
+
 
     path = pathlib.Path(input_file)
     if path.is_dir():
         print("目录")
         for item in path.iterdir():
             if item.is_dir():
-                merge_and_resplit(item)
+                # merge_and_resplit(item)
+                for i in path.iterdir():
+                    print(item)
+                    print('----')
                 break
     else:
         print("文件")
 
+    return
 
 
 if __name__ == "__main__":
@@ -237,7 +241,7 @@ if __name__ == "__main__":
 
     time.sleep(2)
 
-    # split_video_by_time(save_name)
+    split_video_by_time(save_name)
 
     path = pathlib.Path(save_name)
     file_name = 'finish.m3u8'
