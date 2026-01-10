@@ -169,7 +169,10 @@ def split_video_by_time(input_file, segment_time=130):
 if __name__ == "__main__":
     urtl = 'https://ap-drop-monst.mushroomtrack.com/bcdn_token=PnNoTN6FJu0-hBQXs9k3Qz1CerBKSCqzqEGHRzzfGp4&expires=1768038140&token_path=%2Fvod%2F/vod/12000/12938/12938.m3u8'
     save_name = 'ok.mp4'
-    subprocess.run(['N_m3u8DL-RE', urtl, '--skip-merge', 'False', '--thread-count', '50', '--save-name', save_name], encoding='utf-8')
+    link_name = 'N_m3u8DL-RE'
+    if os.getenv('GITHUB_ACTIONS') == 'true':
+        link_name = './N_m3u8DL-RE'
+    subprocess.run([link_name, urtl, '--skip-merge', 'False', '--thread-count', '50', '--save-name', save_name], encoding='utf-8')
 
     split_video_by_time(save_name)
 
