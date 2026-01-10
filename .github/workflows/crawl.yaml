@@ -13,6 +13,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.14'
+          cache: 'pip'
 
       - name: Install FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v3
