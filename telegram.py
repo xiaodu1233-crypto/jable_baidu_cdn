@@ -146,11 +146,13 @@ def split_video_by_time(input_file , segment_time=130):
     files_and_dirs = os.listdir(path)
 
     for item in files_and_dirs:
+        if item.startswith('ok'):
+            print(pathlib.Path(item).is_dir())
         print(item)
 
 
     output_template = "out%03d.ts"
-    input_file = input_file + '.mp4'
+    # input_file = input_file + '.mp4'
 
     # 构建命令列表
     command = [
