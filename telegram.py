@@ -135,66 +135,48 @@ async def main(my_files, file_name):
 
 
 def merge_and_resplit(ts_dir, output_mp4="merged.mp4"):
-    # 1. 获取所有原始 TS 分片并按数字顺序排序 (极其重要)
-    # 假设 N_m3u8DL-RE 下载的文件在 ts_dir 目录下
+    # 1. 获取并自然排序
     files = glob.glob(os.path.join(ts_dir, "*.ts"))
-    # 自然排序：确保 2.ts 在 10.ts 之前
     files.sort(key=lambda f: int(re.search(r'\d+', os.path.basename(f)).group()))
 
     if not files:
-        print("❌ 错误：目录下没有找到 TS 文件")
+        print("❌ 错误：未找到分片")
         return
 
-    # 2. 创建 FFmpeg 拼接清单文件
-    list_path = "concat_list.txt"
-    with open(list_path, "w", encoding="utf-8") as f:
-        for file in files:
-            # 使用绝对路径，防止 FFmpeg 找不到文件
-            abs_path = os.path.abspath(file).replace("\\", "/")
-            f.write(f"file '{abs_path}'\n")
+    # 2. 绕过 FFmpeg Concat，使用 Linux cat 二进制合并
+    # 这种方式对 1000+ 分片非常友好，不会溢出
+    combined_ts = "combined_all.ts"
+    print(f"🔗 正在使用二进制流合并 {len(files)} 个分片...")
 
-    print(f"🔗 正在合并 {len(files)} 个分片为 {output_mp4}...")
+    # 构造 cat 命令：cat file1.ts file2.ts ... > combined_all.ts
+    # 如果文件太多导致命令行长度超限，我们分批写入
+    with open(combined_ts, 'wb') as outfile:
+        for filename in files:
+            with open(filename, 'rb') as infile:
+                outfile.write(infile.read())
 
-    # 3. 执行无损合并
-    merge_cmd = [
-        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
-        "-i", list_path, "-c", "copy", output_mp4
-    ]
-    subprocess.run(merge_cmd, check=True)
-
-    # 4. 立即将合并后的 2GB 文件重新切分为 45MB 的规范片段
-    print("✂️ 正在进行 45MB 规范化二次切片...")
-    output_template = "out%03d.ts"
-    # input_file = input_file + '.mp4'
-
-    # 构建命令列表
-    command = [
-        "ffmpeg",
-        "-i", input_file,  # 输入文件
-        "-c", "copy",  # 直接拷贝编码流（极速）
-        "-map", "0",  # 包含所有流（音轨、字幕）
-        "-f", "segment",  # 开启切片模式
-        "-segment_time", str(segment_time),  # 切片时间
-        "-reset_timestamps", "1",  # 每个切片时间戳清零
-        output_template  # 输出命名规则
+    # 3. 使用 FFmpeg 将合并后的 TS 转封装为 MP4 并修复时间戳
+    # 这一步是为了让视频在播放器里能正常拖动
+    print("🛠️ 正在修复封装格式并二次切片...")
+    # 我们直接把合并、修复、45MB切片三合一执行，节省 IO
+    split_cmd = [
+        "ffmpeg", "-y",
+        "-i", combined_ts,  # 输入巨大的合并 TS
+        "-c", "copy",  # 不重编码，极速
+        "-map", "0",
+        "-f", "segment",
+        "-segment_size", "45M",  # 重新切成标准的 45MB
+        "-reset_timestamps", "1",
+        "upload_%03d.ts"
     ]
 
     try:
-        print(f"🚀 开始切割视频: {input_file} ...")
-        # run 会等待命令执行完成
-        # capture_output=True 可以捕获错误信息
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        print("✅ 视频切割完成！")
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ FFmpeg 出错啦！错误信息：\n{e.stderr}")
-    except FileNotFoundError:
-        print("❌ 系统找不到 ffmpeg，请检查是否安装并添加到了环境变量。")
-
-    # 5. 清理临时合并文件和清单
-    os.remove(list_path)
-    # os.remove(output_mp4) # 如果为了节省 Actions 空间，切完就可以删了
-    print("✅ 处理完成！现在你可以上传 upload_*.ts 文件了。")
+        subprocess.run(split_cmd, check=True)
+        print("✅ 成功生成 45MB 规范切片")
+    finally:
+        # 清理那个巨大的临时合并文件
+        if os.path.exists(combined_ts):
+            os.remove(combined_ts)
 
 
 # 调用示例
