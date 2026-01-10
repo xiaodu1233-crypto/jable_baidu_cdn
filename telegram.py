@@ -1,5 +1,6 @@
 import asyncio
 import pathlib
+import random
 import re
 import subprocess
 import time
@@ -11,7 +12,12 @@ import os
 from aiohttp import ClientTimeout
 
 # --- 配置区 ---
-BOT_TOKEN = '8462879327:AAGzeC1ydXRaMN-4sog7ebFtL4zSoOGE5Es'
+BOT_TOKEN = ['8462879327:AAGzeC1ydXRaMN-4sog7ebFtL4zSoOGE5Es'
+             '8526190448:AAFjCco4FBUd8ykximyJwmV_31vFm8X66vw',
+             '8526190448:AAFjCco4FBUd8ykximyJwmV_31vFm8X66vw',
+             '8484683061:AAGrDWSCT5oXacM-lV0iJH6IgJruDXCBK5c',
+             '8260112764:AAHWSS2bmqriWJeYLSsM2c09a_pKuLRPBXE',
+             ]
 CHAT_ID = '6554928796'
 WORKER_URL = 'https://tele.xiaodu1234.xyz'
 MAX_CONCURRENT_TASKS = 3  # 限制同时上传的文件数量，建议 2-5 之间
@@ -40,6 +46,7 @@ class TelegramUploader:
     async def upload_single_file(self, session, file_path):
         global index
         """带并发控制的上传任务"""
+        self.api_url = f"https://api.telegram.org/bot{random.choice(BOT_TOKEN)}"
         async with self.semaphore:  # 只有拿到“许可证”的任务才能继续
             url = f"{self.api_url}/sendDocument"
 
