@@ -155,7 +155,7 @@ def split_video_by_time(input_file , segment_time=130):
     # 构建命令列表
     command = [
         "ffmpeg",
-        "-i", input_file',  # 输入文件
+        "-i", input_file,  # 输入文件
         "-c", "copy",  # 直接拷贝编码流（极速）
         "-map", "0",  # 包含所有流（音轨、字幕）
         "-f", "segment",  # 开启切片模式
