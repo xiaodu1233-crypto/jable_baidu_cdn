@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.14'
-
+          cache: 'pip'
 
       - name: Install FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v3
@@ -23,12 +23,17 @@ jobs:
       - name: 3 赋予执行权限
         run: chmod +x ./N_m3u8DL-RE
 
+      - name: 3. 安装 Python 依赖
+        run: |
+          pip install -r requirements.txt
       - name: 4. 运行
         run: | 
-           ulimit -n 10240
-           echo "Current ulimit: $(ulimit -n)"
-           pip install aiohttp &&
+           python -m playwright install --with-deps chromium
            python telegram.py 
+
+      - name: 5. 百度
+        run: | 
+           python baidu.py 
 
       - name: 6. 上传爬取结果
         uses: actions/upload-artifact@v4

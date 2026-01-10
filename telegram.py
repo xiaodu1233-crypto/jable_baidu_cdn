@@ -233,17 +233,17 @@ if __name__ == "__main__":
     split_video_by_time(save_name)
 
 
-
-    time.sleep(2)
-
-    path = pathlib.Path(__file__).parent.joinpath(save_name).joinpath('0____')
-
     #
-    my_files = []
-    for item in path.glob('*.ts'):
-        if item.is_file():
-            my_files.append(item)
-    print(f'my_files {len(my_files)}')
-    file_name = 'finish.m3u8'
-    if len(my_files):
-        asyncio.run(main(my_files, file_name))
+    # time.sleep(2)
+    #
+    # path = pathlib.Path(__file__).parent.joinpath(save_name).joinpath('0____')
+    #
+    # #
+    # my_files = []
+    # for item in path.glob('*.ts'):
+    #     if item.is_file():
+    #         my_files.append(item)
+    # print(f'my_files {len(my_files)}')
+    # file_name = 'finish.m3u8'
+    # if len(my_files):
+    #     asyncio.run(main(my_files, file_name))

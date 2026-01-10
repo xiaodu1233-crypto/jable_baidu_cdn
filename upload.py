@@ -13,7 +13,7 @@ from aiofiles import open
 
 sep3 = asyncio.Semaphore(5)
 err = 0
-base_path = r'G:\oldE\N_m3u8DL-RE_v0.5.1-beta_win-x64_20251029\12938_2026-01-10_09-52-56\0____'
+base_path = r'./ok/0____'
 err_list = []
 
 
@@ -69,7 +69,7 @@ async def main():
 
         print(len(lens))
 
-        async def save_to_m3u8(file_urls, output_path=base_path.split(os.sep)[-2][0:11] + '.m3u8', default_duration=10.0):
+        async def save_to_m3u8(file_urls, output_path=base_path.split(os.sep)[0] + '.m3u8', default_duration=10.0):
             """
             将 ts 文件 URL 列表保存为 m3u8 播放列表
 
