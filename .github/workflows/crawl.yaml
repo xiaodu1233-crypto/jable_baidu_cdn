@@ -33,7 +33,7 @@ jobs:
 
       - name: 5. 百度
         run: | 
-           python baidu.py 
+           python upload.py 
 
       - name: 6. 上传爬取结果
         uses: actions/upload-artifact@v4
