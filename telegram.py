@@ -208,7 +208,8 @@ def split_video_by_time(input_file , segment_time=130):
 
 
 if __name__ == "__main__":
-    urtl = 'https://kumak-clonser.mushroomtrack.com/hls/PFzMIjWSX16Psbsa2N1tHw/1768043344/48000/48168/48168.m3u8'
+    urlt = 'https://gmas-clena.mushroomtrack.com/hls/QkTlFjb1nCtDBjWNsIbkQg/1768049370/35000/35652/35652.m3u8'
+    # urtl = 'https://kumak-clonser.mushroomtrack.com/hls/PFzMIjWSX16Psbsa2N1tHw/1768043344/48000/48168/48168.m3u8'
     save_name = 'ok'
     link_name = 'N_m3u8DL-RE'
     if os.getenv('GITHUB_ACTIONS') == 'true':

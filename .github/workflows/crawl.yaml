@@ -25,6 +25,8 @@ jobs:
 
       - name: 4. 运行
         run: | 
+           ulimit -n 10240
+           echo "Current ulimit: $(ulimit -n)"
            pip install aiohttp &&
            python telegram.py 
 
