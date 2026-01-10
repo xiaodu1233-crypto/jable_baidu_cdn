@@ -229,7 +229,7 @@ if __name__ == "__main__":
 
     time.sleep(2)
 
-    split_video_by_time(save_name)
+    # split_video_by_time(save_name)
 
     path = pathlib.Path(save_name)
     file_name = 'finish.m3u8'
