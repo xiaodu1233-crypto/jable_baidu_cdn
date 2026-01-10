@@ -167,7 +167,7 @@ def split_video_by_time(input_file, segment_time=130):
         print("❌ 系统找不到 ffmpeg，请检查是否安装并添加到了环境变量。")
 
 if __name__ == "__main__":
-    urtl = 'https://ap-drop-monst.mushroomtrack.com/bcdn_token=PnNoTN6FJu0-hBQXs9k3Qz1CerBKSCqzqEGHRzzfGp4&expires=1768038140&token_path=%2Fvod%2F/vod/12000/12938/12938.m3u8'
+    urtl = 'https://kumak-clonser.mushroomtrack.com/hls/PFzMIjWSX16Psbsa2N1tHw/1768043344/48000/48168/48168.m3u8'
     save_name = 'ok.mp4'
     link_name = 'N_m3u8DL-RE'
     if os.getenv('GITHUB_ACTIONS') == 'true':
