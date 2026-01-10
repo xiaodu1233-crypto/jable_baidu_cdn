@@ -201,6 +201,7 @@ def split_video_by_time(input_file , segment_time=130):
         if item.startswith('ok'):
             print(pathlib.Path(item).is_dir())
         print(item)
+    return
 
     path = pathlib.Path(input_file)
     if path.is_dir():
