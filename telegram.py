@@ -143,6 +143,9 @@ def split_video_by_time(input_file , segment_time=130):
     output_template = "out%03d.ts"
     input_file = input_file + '.mp4'
 
+    if os.getenv('GITHUB_ACTIONS') == 'true':
+        input_file = f'.{os.sep}' + input_file
+
     # 构建命令列表
     command = [
         "ffmpeg",
@@ -194,7 +197,7 @@ if __name__ == "__main__":
     file_name = 'finish.m3u8'
     print(f'file_name, {file_name}')
 
-    time.sleep(2)
+    time.sleep(5)
 
     #
     my_files = []
