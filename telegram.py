@@ -30,7 +30,7 @@ class TelegramUploader:
         # 自动判断环境：如果在 GitHub Actions 运行，则不使用代理
         if os.getenv('GITHUB_ACTIONS') == 'true':
             self.proxy = None
-            self.semaphore = asyncio.Semaphore(3)
+            self.semaphore = asyncio.Semaphore(30)
             print("🚀 检测到运行环境：GitHub Actions (不使用代理)")
         else:
             self.proxy = LOCAL_PROXY
@@ -49,7 +49,7 @@ class TelegramUploader:
 
             try:
                 # 模拟一点微小的间隔，防止瞬时并发过高
-                await asyncio.sleep(0.1)
+                # await asyncio.sleep(0.1)
 
 
                 async with session.post(url, data=data, proxy= self.proxy) as response:
@@ -67,7 +67,7 @@ class TelegramUploader:
                         permanent_link = f"{self.worker_url}/?file_id={file_id}"
                         print(f"✅ 成功: {os.path.basename(file_path)}")
                         index = index + 1
-                        await asyncio.sleep(1)
+                        # await asyncio.sleep(1)
                         print(f'当前下载了 {index}')
                         return file_name2, permanent_link,
                     else:
