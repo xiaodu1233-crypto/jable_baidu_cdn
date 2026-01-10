@@ -198,26 +198,13 @@ def split_video_by_time(input_file , segment_time=130):
     files_and_dirs = os.listdir(path)
 
     for item in files_and_dirs:
-        if item.startswith('ok'):
-            print(pathlib.Path(item).is_dir())
+
         print(item)
 
-
-    path = pathlib.Path(input_file)
-    if path.is_dir():
-        print("目录")
-        for item in path.iterdir():
-            if item.is_dir():
-                # merge_and_resplit(item)
-                for i in path.iterdir():
-                    print(item)
-                    print('----')
-                break
-    else:
-        print("文件")
-
-    return
-
+    path = pathlib.Path(__file__).parent.joinpath(input_file).joinpath("0____")
+    files_and_dirs = os.listdir(path)
+    for item in files_and_dirs:
+        print(item)
 
 if __name__ == "__main__":
     # urtl = 'https://gmas-clena.mushroomtrack.com/hls/QkTlFjb1nCtDBjWNsIbkQg/1768049370/35000/35652/35652.m3u8'
@@ -243,15 +230,17 @@ if __name__ == "__main__":
 
     split_video_by_time(save_name)
 
-    path = pathlib.Path(save_name)
-    file_name = 'finish.m3u8'
-    print(f'file_name, {file_name}')
 
-    time.sleep(2)
 
+    # path = pathlib.Path(save_name)
+    # file_name = 'finish.m3u8'
+    # print(f'file_name, {file_name}')
     #
-    my_files = []
-    for item in path.joinpath('0____').glob('*.ts'):
-        my_files.append(item)
-    if len(my_files):
-        asyncio.run(main(my_files, file_name))
+    # time.sleep(2)
+    #
+    # #
+    # my_files = []
+    # for item in path.joinpath('0____').glob('*.ts'):
+    #     my_files.append(item)
+    # if len(my_files):
+    #     asyncio.run(main(my_files, file_name))
