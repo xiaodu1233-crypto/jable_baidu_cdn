@@ -157,7 +157,7 @@ def split_video_by_time(input_file , segment_time=130):
     # 构建命令列表
     command = [
         "ffmpeg",
-        "-i", input_file,  # 输入文件
+        "-i", '*.mp4',  # 输入文件
         "-c", "copy",  # 直接拷贝编码流（极速）
         "-map", "0",  # 包含所有流（音轨、字幕）
         "-f", "segment",  # 开启切片模式
@@ -188,10 +188,10 @@ if __name__ == "__main__":
     command = [
         link_name,
         urtl,
-        "--save-name", "ok",
-        "--tmp-dir", "./temp",  # 临时目录存 TS 片段
+        # "--save-name", "ok",
+        # "--tmp-dir", "./temp",  # 临时目录存 TS 片段
         "--skip-merge", 'false', # 重要：不合并，保留 TS 片段用于上传
-        "--del-after-done", "true",
+        # "--del-after-done", "true",
         "--check-segments-count", "false"# 完成后不删除
     ]
     subprocess.run(command)
