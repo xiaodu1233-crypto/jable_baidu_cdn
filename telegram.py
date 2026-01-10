@@ -126,7 +126,7 @@ async def main(my_files, file_name):
     # 假设你有 100 个文件，程序现在也会有序地 3 个 3 个地传
 
     # return
-    uploader = TelegramUploader(BOT_TOKEN, CHAT_ID, WORKER_URL, MAX_CONCURRENT_TASKS)
+    uploader = TelegramUploader(BOT_TOKEN[0], CHAT_ID, WORKER_URL, MAX_CONCURRENT_TASKS)
     print(f"🚀 开始批量上传，当前并发限制: {MAX_CONCURRENT_TASKS}")
 
     print(my_files)
