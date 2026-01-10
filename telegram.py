@@ -134,7 +134,7 @@ async def main(my_files, file_name):
     print(f"🎬 你的在线播放地址: {final_m3u8_id[1]}")
 
 
-def merge_and_resplit(ts_dir, output_mp4="merged.mp4"):
+def merge_and_resplit(ts_dir, output_mp4="merged.mp4", segment_time = 130):
     # 1. 获取并自然排序
     files = glob.glob(os.path.join(ts_dir, "*.ts"))
     files.sort(key=lambda f: int(re.search(r'\d+', os.path.basename(f)).group()))
@@ -155,21 +155,18 @@ def merge_and_resplit(ts_dir, output_mp4="merged.mp4"):
             with open(filename, 'rb') as infile:
                 outfile.write(infile.read())
 
-    # 3. 使用 FFmpeg 将合并后的 TS 转封装为 MP4 并修复时间戳
-    # 这一步是为了让视频在播放器里能正常拖动
-    print("🛠️ 正在修复封装格式并二次切片...")
-    # 我们直接把合并、修复、45MB切片三合一执行，节省 IO
-    split_cmd = [
-        "ffmpeg", "-y",
-        "-i", combined_ts,  # 输入巨大的合并 TS
-        "-c", "copy",  # 不重编码，极速
-        "-map", "0",
-        "-f", "segment",
-        "-segment_size", "45M",  # 重新切成标准的 45MB
-        "-reset_timestamps", "1",
-        "upload_%03d.ts"
-    ]
-
+        # 3. 按时间重新切片
+        print(f"✂️ 正在按时间（{segment_time}s）进行二次切片...")
+        split_cmd = [
+            "ffmpeg", "-y",
+            "-i", combined_ts,  # 输入合并后的 TS
+            "-c", "copy",  # 无损拷贝
+            "-map", "0",
+            "-f", "segment",
+            "-segment_time", str(segment_time),  # 【此处已换回时间参数】
+            "-reset_timestamps", "1",
+            "upload_%03d.ts"  # 生成新的上传片段
+        ]
     try:
         subprocess.run(split_cmd, check=True)
         print("✅ 成功生成 45MB 规范切片")
